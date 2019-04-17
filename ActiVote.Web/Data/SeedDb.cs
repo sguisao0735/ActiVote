@@ -31,8 +31,8 @@
                 {
                     FirstName = "Sebastian",
                     LastName = "Guisao",
-                    Email = "joan.guisa@gmail.com",
-                    UserName = "joan.guisa@gmail.com"
+                    Email = "joan.guisao@gmail.com",
+                    UserName = "joan.guisao@gmail.com"
                 };
 
                 var result = await this.userHelper.AddUserAsync(user, "123456");
