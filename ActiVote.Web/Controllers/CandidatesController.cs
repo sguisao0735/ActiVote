@@ -1,6 +1,9 @@
 ﻿namespace ActiVote.Web.Controllers
 {
+    using System;
+    using System.IO;
     using System.Threading.Tasks;
+    using ActiVote.Web.Models;
     using Data;
     using Data.Entities;
     using Helpers;
@@ -50,17 +53,47 @@
         // POST: Candidates/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Candidate candidate)
+        public async Task<IActionResult> Create(CandidateViewModel view)
         {
             if (ModelState.IsValid)
             {
+                var path = string.Empty;
+
+                if (view.ImageFile != null && view.ImageFile.Length > 0)
+                {
+                    path = Path.Combine(Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\Candidates", 
+                        view.ImageFile.FileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await view.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/Candidates/{view.ImageFile.FileName}";
+                }
+
+                var candidate = this.ToCandidate(view, path);
                 // TODO: Pending to change to: this.User.Identity.Name
                 candidate.User = await this.userHelper.GetUserByEmailAsync("joan.guisao@gmail.com");
                 await this.candidateRepository.CreateAsync(candidate);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(candidate);
+            return View(view);
+        }
+
+        private Candidate ToCandidate(CandidateViewModel view, string path)
+        {
+            return new Candidate
+            {
+                Id = view.Id,
+                Name = view.Name,
+                Proposal = view.Proposal,
+                ImageUrl = path,
+                User = view.User
+
+            };
         }
 
         // GET: Candidates/Edit/5
