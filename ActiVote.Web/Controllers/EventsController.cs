@@ -1,39 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ActiVote.Web.Data;
-using ActiVote.Web.Data.Entities;
-
-namespace ActiVote.Web.Controllers
+﻿namespace ActiVote.Web.Controllers
 {
+    using System.Threading.Tasks;
+    using Data;
+    using Data.Entities;
+    using Helpers;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+
     public class EventsController : Controller
     {
-        private readonly IRepository repository;
+        private readonly IEventRepository eventRepository;
+        private readonly IUserHelper userHelper;
 
-        public EventsController(IRepository repository)
+        public EventsController(IEventRepository eventRepository, IUserHelper userHelper)
         {
-            this.repository = repository;
+            this.eventRepository = eventRepository;
+            this.userHelper = userHelper;
         }
 
         // GET: Events
         public IActionResult Index()
         {
-            return View(this.repository.GetEvents());
+            return View(this.eventRepository.GetAll());
         }
 
         // GET: Events/Details/5
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var @event = this.repository.GetEvent(id.Value);
+            var @event = await this.eventRepository.GetByIdAsync(id.Value);
             if (@event == null)
             {
                 return NotFound();
@@ -55,32 +54,33 @@ namespace ActiVote.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                this.repository.AddEvent(@event);
-                await this.repository.SaveAllAsync();
+                // TODO: Pending to change to: this.User.Identity.Name
+                @event.User = await this.userHelper.GetUserByEmailAsync("joan.guisao@gmail.com");
+                await this.eventRepository.CreateAsync(@event);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(@event);
         }
 
         // GET: Events/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var @event = this.repository.GetEvent(id.Value);
+            var @event = await this.eventRepository.GetByIdAsync(id.Value);
             if (@event == null)
             {
                 return NotFound();
             }
+
             return View(@event);
         }
 
         // POST: Events/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Event @event)
@@ -89,12 +89,13 @@ namespace ActiVote.Web.Controllers
             {
                 try
                 {
-                    this.repository.UpdateEvent(@event);
-                    await this.repository.SaveAllAsync();
+                    // TODO: Pending to change to: this.User.Identity.Name
+                    @event.User = await this.userHelper.GetUserByEmailAsync("joan.guisao@gmail.com");
+                    await this.eventRepository.UpdateAsync(@event);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!this.repository.EventExists(@event.Id))
+                    if (!await this.eventRepository.ExistAsync(@event.Id))
                     {
                         return NotFound();
                     }
@@ -105,18 +106,19 @@ namespace ActiVote.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(@event);
         }
 
         // GET: Events/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var @event = this.repository.GetEvent(id.Value);
+            var @event = await this.eventRepository.GetByIdAsync(id.Value);
             if (@event == null)
             {
                 return NotFound();
@@ -130,12 +132,10 @@ namespace ActiVote.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = this.repository.GetEvent(id);
-            this.repository.RemoveEvent(@event);
-            await this.repository.SaveAllAsync();
+            var @event = await this.eventRepository.GetByIdAsync(id);
+            await this.eventRepository.DeleteAsync(@event);
             return RedirectToAction(nameof(Index));
         }
-
-    
     }
+
 }

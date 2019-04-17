@@ -3,7 +3,7 @@
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    public class Candidate
+    public class Candidate : IEntity
     {
         public int Id { get; set; }
 
@@ -17,6 +17,8 @@
 
         [Display(Name = "Image")]
         public string ImageUrl { get; set; }
+
+        public User User { get; set; }
 
 
     }
