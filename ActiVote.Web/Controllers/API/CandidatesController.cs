@@ -14,7 +14,7 @@
         [HttpGet]
         public IActionResult GetCandidates()
         {
-            return Ok(this.candidateRepository.GetAll());
+            return Ok(this.candidateRepository.GetAllWithUsers());
         }
     }
 }

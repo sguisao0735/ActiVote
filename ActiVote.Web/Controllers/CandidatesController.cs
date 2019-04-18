@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
     using ActiVote.Web.Models;
     using Data;
@@ -24,7 +25,7 @@
         // GET: Candidates
         public IActionResult Index()
         {
-            return View(this.candidateRepository.GetAll());
+            return View(this.candidateRepository.GetAll().OrderBy(c => c.Name));
         }
 
         // GET: Candidates/Details/5
@@ -61,16 +62,19 @@
 
                 if (view.ImageFile != null && view.ImageFile.Length > 0)
                 {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
                     path = Path.Combine(Directory.GetCurrentDirectory(),
                         "wwwroot\\images\\Candidates", 
-                        view.ImageFile.FileName);
+                        file);
 
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await view.ImageFile.CopyToAsync(stream);
                     }
 
-                    path = $"~/images/Candidates/{view.ImageFile.FileName}";
+                    path = $"~/images/Candidates/{file}";
                 }
 
                 var candidate = this.ToCandidate(view, path);
@@ -110,25 +114,58 @@
                 return NotFound();
             }
 
-            return View(candidate);
+            var view = this.ToCandidateViewModel(candidate);
+            return View(view);
+        }
+
+        private CandidateViewModel ToCandidateViewModel(Candidate candidate)
+        {
+            return new CandidateViewModel
+            {
+                Id = candidate.Id,
+                Name = candidate.Name,
+                Proposal = candidate.Proposal,
+                ImageUrl=candidate.ImageUrl,
+                User = candidate.User
+            };
         }
 
         // POST: Candidates/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Candidate candidate)
+        public async Task<IActionResult> Edit(CandidateViewModel view)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var path = view.ImageUrl;
+
+                    if (view.ImageFile != null && view.ImageFile.Length > 0)
+                    {
+                        var guid = Guid.NewGuid().ToString();
+                        var file = $"{guid}.jpg";
+
+                        path = Path.Combine(Directory.GetCurrentDirectory(),
+                            "wwwroot\\images\\Candidates",
+                            file);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await view.ImageFile.CopyToAsync(stream);
+                        }
+
+                        path = $"~/images/Candidates/{file}";
+                    }
+
+                    var candidate = this.ToCandidate(view, path);
                     // TODO: Pending to change to: this.User.Identity.Name
                     candidate.User = await this.userHelper.GetUserByEmailAsync("joan.guisao@gmail.com");
                     await this.candidateRepository.UpdateAsync(candidate);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await this.candidateRepository.ExistAsync(candidate.Id))
+                    if (!await this.candidateRepository.ExistAsync(view.Id))
                     {
                         return NotFound();
                     }
@@ -140,7 +177,7 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(candidate);
+            return View(view);
         }
 
         // GET: Candidates/Delete/5

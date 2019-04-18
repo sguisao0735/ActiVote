@@ -1,16 +1,16 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-
-namespace ActiVote.App
+﻿namespace ActiVote.App
 {
+    using ActiVote.App.Views;
+    using System;
+    using Xamarin.Forms;
+    using Xamarin.Forms.Xaml;
     public partial class App : Application
     {
         public App()
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new NavigationPage(new LoginPage());
         }
 
         protected override void OnStart()

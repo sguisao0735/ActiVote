@@ -23,7 +23,7 @@
         {
             return await this.context.Set<T>()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(g => g.Id == id);
         }
 
         public async Task CreateAsync(T entity)
@@ -46,7 +46,7 @@
 
         public async Task<bool> ExistAsync(int id)
         {
-            return await this.context.Set<T>().AnyAsync(e => e.Id == id);
+            return await this.context.Set<T>().AnyAsync(g => g.Id == id);
 
         }
 
