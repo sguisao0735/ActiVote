@@ -1,9 +1,8 @@
 ﻿namespace ActiVote.App.ViewModels
 {
-    
-    using System;
-    using System.Windows.Input;
+    using ActiVote.App.Views;
     using GalaSoft.MvvmLight.Command;
+    using System.Windows.Input;
     using Xamarin.Forms;
 
     public class LoginViewModel
@@ -40,7 +39,7 @@
                 return;
             }
 
-            if(!this.Email.Equals("joan.guisao@gmail.com") || !this.Password.Equals("123456"))
+            if (!this.Email.Equals("joan.guisao@gmail.com") || !this.Password.Equals("123456"))
             {
                 await Application.Current.MainPage.DisplayAlert(
                     "Error",
@@ -48,10 +47,13 @@
                     "Accept");
                 return;
             }
-            await Application.Current.MainPage.DisplayAlert(
-                    "ok",
-                    "Yeah Yeah!!!",
-                    "Accept");
+            /* await Application.Current.MainPage.DisplayAlert(
+                     "ok",
+                     "Yeah Yeah!!!",
+                     "Accept");*/
+
+            MainViewModel.GetInstance().Events = new EventsViewModel();
+            await Application.Current.MainPage.Navigation.PushAsync(new EventsPage());
         }
     }
 }

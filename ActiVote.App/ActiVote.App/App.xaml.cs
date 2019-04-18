@@ -1,16 +1,16 @@
 ﻿namespace ActiVote.App
 {
+    using ActiVote.App.ViewModels;
     using ActiVote.App.Views;
-    using System;
     using Xamarin.Forms;
-    using Xamarin.Forms.Xaml;
     public partial class App : Application
     {
         public App()
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new LoginPage());
+            MainViewModel.GetInstance().Login = new LoginViewModel();
+            this.MainPage = new NavigationPage(new LoginPage());
         }
 
         protected override void OnStart()
