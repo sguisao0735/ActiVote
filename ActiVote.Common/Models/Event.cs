@@ -15,12 +15,17 @@
         public string Description { get; set; }
 
         [JsonProperty("startDate")]
-        public DateTimeOffset StartDate { get; set; }
+        public object StartDate { get; set; }
 
         [JsonProperty("endDate")]
-        public DateTimeOffset EndDate { get; set; }
+        public object EndDate { get; set; }
 
         [JsonProperty("user")]
         public User User { get; set; }
+
+        public override string ToString()
+        {
+            return $"{this.EventName} { this.Description} { this.StartDate} { this.EndDate}";
+        }
     }
 }

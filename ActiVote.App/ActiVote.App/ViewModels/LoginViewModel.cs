@@ -54,6 +54,9 @@
 
             MainViewModel.GetInstance().Events = new EventsViewModel();
             await Application.Current.MainPage.Navigation.PushAsync(new EventsPage());
+
+            //MainViewModel.GetInstance().Candidates = new CandidatesViewModel();
+            //await Application.Current.MainPage.Navigation.PushAsync(new CandidatesPage());
         }
     }
 }

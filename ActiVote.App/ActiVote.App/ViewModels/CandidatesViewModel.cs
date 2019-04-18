@@ -1,19 +1,26 @@
 ﻿namespace ActiVote.App.ViewModels
 {
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using Common.Models;
     using Common.Services;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using Xamarin.Forms;
 
     public class CandidatesViewModel : BaseViewModel
     {
         private readonly ApiService apiService;
         private ObservableCollection<Candidate> candidates;
+        private bool isRefreshing;
         public ObservableCollection<Candidate> Candidates
         {
-            get { return this.candidates; }
-            set { this.SetValue(ref this.candidates, value); }
+            get => this.candidates;
+            set => this.SetValue(ref this.candidates, value);
+        }
+
+        public bool IsRefreshing
+        {
+            get => this.isRefreshing;
+            set => this.SetValue(ref this.isRefreshing, value);
         }
 
 
@@ -25,10 +32,14 @@
 
         private async void LoadCandidates()
         {
+            this.IsRefreshing = true;
+
             var response = await this.apiService.GetListAsync<Candidate>(
                 "https://activote.azurewebsites.net",
                 "/api",
                 "/Candidates");
+
+            this.IsRefreshing = false;
 
             if (!response.IsSuccess)
             {

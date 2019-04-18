@@ -22,5 +22,10 @@
 
         [JsonProperty("imageFullPath")]
         public Uri ImageFullPath { get; set; }
+
+        public override string ToString()
+        {
+            return $"{this.Name} {this.Proposal}";
+        }
     }
 }
