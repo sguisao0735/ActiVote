@@ -24,13 +24,14 @@
         [MaxLength(1, ErrorMessage = "The field {0} only supports {1} characters.")]
         public int Stratum { get; set; }
 
+        //TODO: List of Genders
         [MaxLength(10, ErrorMessage = "The field {0} only supports {1} characters.")]
         public string Gender { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime Birthdate { get; set; }
        
-
+        //TODO: List of Cities
         public string City { get; set; }
                 
     }

@@ -1,7 +1,11 @@
 ﻿namespace ActiVote.Web.Controllers.API
 {
-    using ActiVote.Web.Data;
+    using Data;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[Controller]")]
     public class EventsController : Controller
     {
