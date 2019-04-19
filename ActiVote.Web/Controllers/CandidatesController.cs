@@ -80,8 +80,7 @@
                 }
 
                 var candidate = this.ToCandidate(view, path);
-                // TODO: Pending to change to: this.User.Identity.Name
-                candidate.User = await this.userHelper.GetUserByEmailAsync("joan.guisao@gmail.com");
+                candidate.User = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 await this.candidateRepository.CreateAsync(candidate);
                 return RedirectToAction(nameof(Index));
             }
@@ -161,8 +160,7 @@
                     }
 
                     var candidate = this.ToCandidate(view, path);
-                    // TODO: Pending to change to: this.User.Identity.Name
-                    candidate.User = await this.userHelper.GetUserByEmailAsync("joan.guisao@gmail.com");
+                    candidate.User = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await this.candidateRepository.UpdateAsync(candidate);
                 }
                 catch (DbUpdateConcurrencyException)
