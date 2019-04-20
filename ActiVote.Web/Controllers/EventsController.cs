@@ -1,16 +1,16 @@
 ﻿namespace ActiVote.Web.Controllers
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using Data;
     using Data.Entities;
-    using Helpers;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Models;
+    using Helpers;
     using Microsoft.EntityFrameworkCore;
+    using System.Linq;
 
-
-    
+    [Authorize(Roles = "Admin")]
     public class EventsController : Controller
     {
         private readonly IEventRepository eventRepository;
@@ -21,15 +21,62 @@
             this.eventRepository = eventRepository;
             this.userHelper = userHelper;
         }
-
         
+
         public IActionResult Index()
         {
-            return View(this.eventRepository.GetAll().OrderBy(e => e.EventName));
+            return View(this.eventRepository.GetEventsWithCandidates());
         }
 
-        // GET: Events/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> DeleteCandidate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var candidate = await this.eventRepository.GetCandidateAsync(id.Value);
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            var eventId = await this.eventRepository.DeleteCandidateAsync(candidate);
+            return this.RedirectToAction($"Details/{eventId}");
+        }
+
+        public async Task<IActionResult> EditCandidate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var candidate = await this.eventRepository.GetCandidateAsync(id.Value);
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            return View(candidate);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCandidate(Candidate candidate)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var eventId = await this.eventRepository.UpdateCandidateAsync(candidate);
+                if (eventId != 0)
+                {
+                    return this.RedirectToAction($"Details/{eventId}");
+                }
+            }
+
+            return this.View(candidate);
+        }
+
+        public async Task<IActionResult> AddCandidate(int? id)
         {
             if (id == null)
             {
@@ -42,33 +89,58 @@
                 return NotFound();
             }
 
+            var model = new CandidateViewModel { EventId = @event.Id };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCandidate(CandidateViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                await this.eventRepository.AddCandidateAsync(model);
+                return this.RedirectToAction($"Details/{model.EventId}");
+            }
+
+            return this.View(model);
+        }
+
+
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @event = await this.eventRepository.GetEventWithCandidatesAsync(id.Value);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
             return View(@event);
         }
 
-        // GET: Events/Create
-        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Events/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Event @event)
         {
             if (ModelState.IsValid)
             {
-                @event.User = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 await this.eventRepository.CreateAsync(@event);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(@event);
         }
-        //TODO:Validate if required Authorize
-        // GET: Events/Edit/5
-        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,41 +153,22 @@
             {
                 return NotFound();
             }
-
             return View(@event);
         }
 
-        // POST: Events/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Event @event)
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    @event.User = await this.userHelper.GetUserByEmailAsync(this.User.Identity.Name);
-                    await this.eventRepository.UpdateAsync(@event);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await this.eventRepository.ExistAsync(@event.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await this.eventRepository.UpdateAsync(@event);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(@event);
         }
 
-        // GET: Events/Delete/5
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,15 +182,6 @@
                 return NotFound();
             }
 
-            return View(@event);
-        }
-
-        // POST: Events/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var @event = await this.eventRepository.GetByIdAsync(id);
             await this.eventRepository.DeleteAsync(@event);
             return RedirectToAction(nameof(Index));
         }

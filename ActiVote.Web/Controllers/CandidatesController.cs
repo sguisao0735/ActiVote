@@ -35,13 +35,13 @@
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CandidateNotFound");
             }
 
             var candidate = await this.candidateRepository.GetByIdAsync(id.Value);
             if (candidate == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CandidateNotFound");
             }
 
             return View(candidate);
@@ -108,13 +108,13 @@
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CandidateNotFound");
             }
 
             var candidate = await this.candidateRepository.GetByIdAsync(id.Value);
             if (candidate == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CandidateNotFound");
             }
 
             var view = this.ToCandidateViewModel(candidate);
@@ -188,13 +188,13 @@
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CandidateNotFound");
             }
 
             var candidate = await this.candidateRepository.GetByIdAsync(id.Value);
             if (candidate == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("CandidateNotFound");
             }
 
             return View(candidate);
@@ -209,6 +209,12 @@
             await this.candidateRepository.DeleteAsync(candidate);
             return RedirectToAction(nameof(Index));
         }
+        //TODO: Create Page NotFound
+        public IActionResult CandidateNotFound()
+        {
+            return this.View();
+        }
+
     }
 
 }

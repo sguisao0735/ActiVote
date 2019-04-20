@@ -1,10 +1,10 @@
-﻿@model IEnumerable<ActiVote.Web.Data.Entities.Event>
+﻿@model IEnumerable<ActiVote.Web.Data.Entities.Country>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Events</h2>
+<h2>Countries</h2>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
@@ -13,19 +13,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.EventName)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumberCandidates)
+                @Html.DisplayNameFor(model => model.NumberCities)
             </th>
             <th></th>
         </tr>
@@ -33,28 +24,19 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberCandidates)
-            </td>
-            <td id="@item.Id">
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" id="btnDelete">Delete</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberCities)
+                </td>
+                <td id="@item.Id">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" id="btnDelete">Delete</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
@@ -67,7 +49,7 @@
                 <h4 class="modal-title">Delete</h4>
             </div>
             <div class="modal-body">
-                <p>Do you want to delete the Event?</p>
+                <p>Do you want to delete the country?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" id="btnYesDelete">Delete</button>
@@ -98,9 +80,11 @@
             });
 
             $("#btnYesDelete").click(function () {
-                window.location.href = '/Events/Delete/' + id;
+                window.location.href = '/Countries/Delete/' + id;
             });
 
         });
     </script>
 }
+
+

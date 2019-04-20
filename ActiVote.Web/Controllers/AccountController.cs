@@ -89,7 +89,7 @@
                         Stratum = model.Stratum,
                         Gender = model.Gender,
                         Birthdate = model.Birthdate,
-                        City = model.City
+                        
 
                     };
 
@@ -137,7 +137,7 @@
                 model.Stratum = user.Stratum;
                 model.Gender = user.Gender;
                 model.Birthdate = user.Birthdate;
-                model.City = user.City;
+                
             }
 
             return this.View(model);
@@ -157,7 +157,7 @@
                     user.Stratum = model.Stratum;
                     user.Gender = model.Gender;
                     user.Birthdate = model.Birthdate;
-                    user.City = model.City;
+                    
 
                     var respose = await this.userHelper.UpdateUserAsync(user);
                     if (respose.Succeeded)
@@ -251,5 +251,11 @@
 
             return this.BadRequest();
         }
+
+        public IActionResult NotAuthorized()
+        {
+            return this.View();
+        }
+
     }
 }

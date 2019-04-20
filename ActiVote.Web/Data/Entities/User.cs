@@ -30,9 +30,15 @@
 
         [DataType(DataType.Date)]
         public DateTime Birthdate { get; set; }
-       
+
         //TODO: List of Cities
-        public string City { get; set; }
-                
+        [MaxLength(100, ErrorMessage = "The field {0} only can contain {1} characters length.")]
+        public int CityId { get; set; }
+
+        public City City { get; set; }
+
+        
+
+
     }
 }

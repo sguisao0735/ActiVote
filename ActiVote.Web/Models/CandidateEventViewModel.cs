@@ -1,10 +1,7 @@
 ﻿namespace ActiVote.Web.Models
 {
     using System.ComponentModel.DataAnnotations;
-    using Data.Entities;
-    using Microsoft.AspNetCore.Http;
-
-    public class CandidateViewModel : Candidate
+    public class CandidateEventViewModel
     {
         public int EventId { get; set; }
 
@@ -12,17 +9,11 @@
 
         [MaxLength(50, ErrorMessage = "The field {0} only supports {1} characters.")]
         [Required]
-        public new string Name { get; set; }
+        public string Name { get; set; }
 
         [MaxLength(250, ErrorMessage = "The field {0} only supports {1} characters.")]
         [Required]
-        public new string Proposal { get; set; }
-
-        [Display(Name = "Image")]
-        public new string ImageUrl { get; set; }
-
-        [Display(Name = "Image")]
-        public IFormFile ImageFile { get; set; }
+        public string Proposal { get; set; }
 
     }
 }
