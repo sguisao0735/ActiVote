@@ -19,9 +19,6 @@
         public new string Proposal { get; set; }
 
         [Display(Name = "Image")]
-        public new string ImageUrl { get; set; }
-
-        [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }
 
     }

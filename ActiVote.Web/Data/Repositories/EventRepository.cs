@@ -27,7 +27,7 @@
                 return;
             }
 
-            @event.Candidates.Add(new Candidate { Name = model.Name, Proposal = model.Proposal, ImageUrl = model.ImageFullPath });
+            @event.Candidates.Add(new Candidate { Name = model.Name, Proposal = model.Proposal, ImageUrl = model.ImageUrl });
             this.context.Events.Update(@event);
             await this.context.SaveChangesAsync();
         }

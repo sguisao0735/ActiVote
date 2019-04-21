@@ -10,7 +10,7 @@
     using Microsoft.EntityFrameworkCore;
     using System.Linq;
 
-    [Authorize(Roles = "Admin")]
+   
     public class EventsController : Controller
     {
         private readonly IEventRepository eventRepository;
@@ -45,6 +45,7 @@
             return this.RedirectToAction($"Details/{eventId}");
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditCandidate(int? id)
         {
             if (id == null)
@@ -76,6 +77,7 @@
             return this.View(candidate);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddCandidate(int? id)
         {
             if (id == null)
@@ -123,6 +125,7 @@
             return View(@event);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -140,7 +143,7 @@
 
             return View(@event);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -168,7 +171,7 @@
 
             return View(@event);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

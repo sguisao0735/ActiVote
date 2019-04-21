@@ -1,12 +1,17 @@
 ﻿@model ActiVote.Web.Models.CandidateViewModel
 
-<h4>Candidate</h4>
+@{
+    ViewData["Title"] = "Candidate";
+}
+
+<h4>Add Candidate</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="AddCandidate">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="EventId" />
+
 
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>

@@ -6,7 +6,7 @@
 <h2>Register New User</h2>
 
 <div class="row">
-    <div class="col-md-4 offset-md-4 background-color:gray" >
+    <div class="col-md-4 offset-md-4 background-color:gray">
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
 
@@ -45,12 +45,19 @@
                 <input asp-for="Birthdate" class="form-control" />
                 <span asp-validation-for="Birthdate" type="date"></span>
             </div>
-            
+
             <div class="form-group">
-                <label asp-for="City">City</label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-warning"></span>
+                <label asp-for="CountryId" class="control-label"></label>
+                <select asp-for="CountryId" asp-items="Model.Countries" class="form-control"></select>
+                <span asp-validation-for="CountryId" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="CityId" class="control-label"></label>
+                <select asp-for="CityId" asp-items="Model.Cities" class="form-control"></select>
+                <span asp-validation-for="CityId" class="text-danger"></span>
+            </div>
+
 
             <div class="form-group">
                 <label asp-for="Username">Username</label>
@@ -79,4 +86,31 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#CountryId").change(function () {
+                $("#CityId").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetCitiesAsync")',
+                    dataType: 'json',
+                    data: { countryId: $("#CountryId").val() },
+                    success: function (cities) {
+                        debugger;
+                        $("#CityId").append('<option value="0">(Select a city...)</option>');
+                        $.each(cities, function (i, city) {
+                            $("#CityId").append('<option value="'
+                                + city.id + '">'
+                                + city.name + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve cities.' + ex);
+                    }
+                });
+                return false;
+            })
+        });
+    </script>
 }
+
